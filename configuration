@@ -1,0 +1,36 @@
+#!/bin/bash
+
+if [[ -z "$1" ]]
+then
+	echo -e "\t\tNo Argument Given\n"
+	printf '%s\n' "$usage"
+elif [[ $1 = "cpu" ]] && [[ $2 = "getinfo" ]]
+then
+	source cpu
+elif [[ $1 = "memory" ]] && [[ $2 = "getinfo" ]]
+then
+	source memory
+elif [[ $1 = "user" ]] && [[ $2 = "create" ]]
+then
+	source create
+	#exec sudo adduser myuser --gecos "First Last,RoomNumber,WorkPhone,HomePhone" --disabled-password
+	#exec sudo useradd -s /bin/bash -m -p toor myuser
+
+elif [[ $1 = "user" ]] && [[ $2 = "list" ]] && [[ -z "$3" ]]
+then
+	source list
+	#. ./list
+elif [[ $1 = "user" ]] && [[ $2 = "list" ]] && [[ $3 = "--sudo-only" ]]
+then
+	source sudoer
+elif [[ $1 = "file" ]] && [[ $2 = "getinfo" ]] && [[ -z $4 ]]
+then
+	source information
+
+elif [[ $1 = "file" ]] && [[ $2 = "getinfo" ]] && [[ -e $4 ]] # -e checks if file exit
+then
+	source information2
+
+else
+	echo "bad input"
+fi
