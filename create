@@ -1,0 +1,28 @@
+#!/bin/bash
+
+# to check if root user [as without root it gives error: cannot lock /etc/passwd]
+#That's because we don't have permissions for those operations
+#You can't read /etc/shadow
+#You can't directly modify /etc/passwd
+
+if [ $(id -u) -eq 0 ]; then
+	read -p "Enter username : " username
+	read -s -p "Enter password : " password
+	egrep "^$username" /etc/passwd >/dev/null
+	if [ $? -eq 0 ]; then
+		echo -e "\n$username exists!"
+		#exit 1
+	else
+		pass=$(perl -e 'print crypt($ARGV[0], "password")' $password)
+		useradd -s /bin/bash -m -p "$pass" "$username"
+		[ $? -eq 0 ] && echo "User has been added to system!" || echo "Failed to add a user!"
+	fi
+else
+	echo "Only root may add a user to the system."
+	#exit 2
+fi
+
+
+#sudo useradd $username
+#echo $username:U6aMy0wojraho | sudo chpasswd -e
+#su $username
