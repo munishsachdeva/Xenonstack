@@ -1,0 +1,20 @@
+#!/bin/bash
+
+ 
+#minimum UID limit
+a=$(grep "^UID_MIN" /etc/login.defs)
+ 
+#maximum UID limit
+b=$(grep "^UID_MAX" /etc/login.defs)
+ 
+#use awk to print if UID >= $MIN and UID <= $MAX and shell is not /sbin/nologin
+
+awk -F':' -v "min=${a##UID_MIN}" -v "max=${b##UID_MAX}" '{ if ( $3 >= min && $3 <= max && $7 != "/sbin/nologin" ) print $1 }' "/etc/passwd"
+
+# or use getent and looping it 
+#getent passwd {1000..6000}
+
+#eval getent passwd {$(awk '/^UID_MIN/ {print $2}' /etc/login.defs)..$(awk '/^UID_MAX/ {print $2}' /etc/login.defs)} | cut -d: -f1
+#consumes more time
+
+#grep -E '^UID_MIN|^UID_MAX' /etc/login.defs
