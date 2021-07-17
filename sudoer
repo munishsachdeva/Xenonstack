@@ -1,0 +1,18 @@
+#!/bin/bash
+exec getent passwd | cut -f1 -d: | xargs -L1 sudo -l -U | grep -v 'not allowed'
+
+#a="/etc/login.defs"
+#b="/etc/passwd"
+ 
+#minimum UID limit
+#l=$(grep "^UID_MIN" $a)
+ 
+#maximum UID limit
+#l1=$(grep "^UID_MAX" $a)
+ 
+#use awk to print if UID >= $MIN and UID <= $MAX and shell is not /sbin/nologin
+
+#for user in $(awk -F':' -v "min=${l##UID_MIN}" -v "max=${l1##UID_MAX}" '{ if ( $3 >= min && $3 <= max && $7 != "/sbin/nologin" ) print $1 }' "$b")
+#do
+#	sudo -l -U $user
+#done
