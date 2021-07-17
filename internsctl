@@ -1,0 +1,31 @@
+#!/bin/bash
+
+version="internsctl v0.1.0"
+
+usage="Usage: $0 [ARGUMENT]...[OPTION]...
+
+
+Mandatory arguments to long options are mandatory for short options too
+
+	cpu getinfo			output cpu information of server
+	memory getinfo			output memory information of server
+	user create			create a new user on server
+	user list			list all users on server
+	file getinfo [FILENAME]		output file information
+	--help				display this help and exit
+	--version			display version information and exit
+		
+			See Manual for more options
+			"
+
+case $1 in
+--help)
+    printf '%s\n' "$usage"
+    ;;
+--version)
+    printf '%s\n' "$version"
+    ;;
+*)
+    source configuration
+    ;;
+esac
