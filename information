@@ -1,0 +1,13 @@
+#!/bin/bash
+#echo -n "name: "
+#read $1
+if [[ -n $3 ]] && [[ -e $3 ]]
+then
+	echo -n "File: " ; ls -l $3 | awk '{print$9}' #stat -c '%n' $3
+	echo -n "Access: " ; ls -l $3 | awk '{print$1}' #stat -c '%A' $3
+	echo -n "Size(B): " ; ls -l $3 | awk '{print$5}' #stat -c '%s' $3
+	echo -n "Owner: " ; ls -l $3 | awk '{print$4}' #stat -c '%U' $3
+	echo -n "Modify: " ; stat -c '%y' $3
+else
+	echo "File not present..!"
+fi
