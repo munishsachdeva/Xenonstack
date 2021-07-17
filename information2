@@ -1,0 +1,37 @@
+#!/bin/bash
+#while getopts ":spom" option;
+#do
+#	case $option in
+#	s | --size )
+#		echo "received -s"
+#		;;
+#	p | --permissions )
+#		echo "received -p"
+#		;;
+#	o | --owner )
+#		echo "received -o"
+#		;;
+#	m | --last-modified )
+#		echo "received -m"
+#		;;
+#	*)
+#		echo "Wrong option"
+#	esac
+#done
+
+case $3 in
+-s | --size )
+	echo -n "Size(B): " ; ls -l $4 | awk '{print$5}'
+	;;
+-p | --permissions )
+	echo -n "Access: " ; ls -l $4 | awk '{print$1}'
+	;;
+-o | --owner )
+	echo -n "Owner: " ; ls -l $4 | awk '{print$4}'
+	;;
+-m | --last-modified )
+	echo -n "Modify: " ; stat -c '%y' $4
+	;;
+*)
+	echo "Wrong option"
+esac
