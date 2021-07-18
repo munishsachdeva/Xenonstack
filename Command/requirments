@@ -1,3 +1,5 @@
 #!/bin/bash
 
-exec cp information2 /bin/bash
+sudo mv internsctl /usr/bin/
+sudo mv 'internsctl.1' /usr/share/man/man1/
+sudo gzip /usr/share/man/man1/internsctl.1
