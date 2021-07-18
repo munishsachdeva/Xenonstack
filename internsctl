@@ -9,7 +9,7 @@ Mandatory arguments to long options are mandatory for short options too
 
 	cpu getinfo			output cpu information of server
 	memory getinfo			output memory information of server
-	user create			create a new user on server
+	user create			create a new user on server [sudo required]
 	user list			list all users on server
 	file getinfo [FILENAME]		output file information
 	--help				display this help and exit
