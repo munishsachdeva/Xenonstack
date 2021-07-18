@@ -3,7 +3,7 @@
 if [[ -z "$1" ]]
 then
 	echo -e "\t\tNo Argument Given\n"
-	printf '%s\n' "$usage"
+	printf '%s\n' "$(usage)"
 elif [[ $1 = "cpu" ]] && [[ $2 = "getinfo" ]]
 then
 	exec lscpu
