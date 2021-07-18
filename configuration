@@ -6,10 +6,10 @@ then
 	printf '%s\n' "$usage"
 elif [[ $1 = "cpu" ]] && [[ $2 = "getinfo" ]]
 then
-	source cpu
+	exec lscpu
 elif [[ $1 = "memory" ]] && [[ $2 = "getinfo" ]]
 then
-	source memory
+	exec free
 elif [[ $1 = "user" ]] && [[ $2 = "create" ]]
 then
 	source create
