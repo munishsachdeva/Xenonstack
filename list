@@ -1,20 +1,50 @@
 #!/bin/bash
 
  
+if [[ -z $3 ]]
+then 
+	#minimum UID limit
+	a=$(grep "^UID_MIN" /etc/login.defs)
+ 
+	#maximum UID limit
+	b=$(grep "^UID_MAX" /etc/login.defs)
+ 
+	#use awk to print if UID >= $MIN and UID <= $MAX and shell is not /sbin/nologin
+
+	awk -F':' -v "min=${a##UID_MIN}" -v "max=${b##UID_MAX}" '{ if ( $3 >= min && $3 <= max && $7 != "/sbin/nologin" ) print $1 }' "/etc/passwd"
+	
+	# or use getent and looping it 
+	#getent passwd {1000..6000}
+	
+	#getent passwd | grep '/bin/bash' | cut -f1 -d:
+
+	#eval getent passwd {$(awk '/^UID_MIN/ {print $2}' /etc/login.defs)..$(awk '/^UID_MAX/ {print $2}' /etc/login.defs)} | cut -d: -f1
+	#consumes more time
+
+	#grep -E '^UID_MIN|^UID_MAX' /etc/login.defs
+
+elif [[ $3 = "--sudo-only" ]]
+then
+	exec getent passwd | cut -f1 -d: | xargs -L1 sudo -l -U | grep -v 'not allowed'
+
+else
+	echo -e "\tWrong Option\n"
+	echo -e "\t See Usage"
+fi
+#a="/etc/login.defs"
+#b="/etc/passwd"
+ 
 #minimum UID limit
-a=$(grep "^UID_MIN" /etc/login.defs)
+#l=$(grep "^UID_MIN" $a)
  
 #maximum UID limit
-b=$(grep "^UID_MAX" /etc/login.defs)
+#l1=$(grep "^UID_MAX" $a)
  
 #use awk to print if UID >= $MIN and UID <= $MAX and shell is not /sbin/nologin
 
-awk -F':' -v "min=${a##UID_MIN}" -v "max=${b##UID_MAX}" '{ if ( $3 >= min && $3 <= max && $7 != "/sbin/nologin" ) print $1 }' "/etc/passwd"
-
-# or use getent and looping it 
-#getent passwd {1000..6000}
-
-#eval getent passwd {$(awk '/^UID_MIN/ {print $2}' /etc/login.defs)..$(awk '/^UID_MAX/ {print $2}' /etc/login.defs)} | cut -d: -f1
-#consumes more time
-
-#grep -E '^UID_MIN|^UID_MAX' /etc/login.defs
+#for user in $(awk -F':' -v "min=${l##UID_MIN}" -v "max=${l1##UID_MAX}" '{ if ( $3 >= min && $3 <= max && $7 != "/sbin/nologin" ) print $1 }' "$b")
+#do
+#	sudo -l -U $user
+#done
+#above command was not showing root user!!
+#also getent looks up external users [such as LDAP] as well as local users
