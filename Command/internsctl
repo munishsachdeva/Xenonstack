@@ -1,0 +1,135 @@
+#!/bin/bash
+
+version="internsctl v0.1.0"
+
+usage="Usage: $0 [ARGUMENT]...[OPTION]...
+
+
+Mandatory arguments to long options are mandatory for short options too
+
+	cpu getinfo			output cpu information of server
+	memory getinfo			output memory information of server
+	user create			create a new user on server
+	user list			list all users on server
+	file getinfo [FILENAME]		output file information
+	--help				display this help and exit
+	--version			display version information and exit
+		
+			See Manual for more options
+			"
+
+create() {
+	if [[ -n $3 ]]
+	then
+		if [ "$(id -u)" -eq 0 ]
+		then
+			read -r -s -p "Enter password : " password
+			grep -E "^$3" /etc/passwd >/dev/null
+				if [ $? -eq 0 ]
+				then
+					echo -e "\n$3 exists!"
+				else
+					pass=$(perl -e 'print crypt($ARGV[0], "password")' "$password")
+					useradd -s /bin/bash -m -p "$pass" "$(username)"
+					[ $? -eq 0 ] && echo "User has been added to system!" || echo "Failed to add a user!"
+				fi
+		else
+			echo "Only root can add a user to the system."
+		fi
+	else
+		echo "Write Username also"
+	fi
+}
+
+list() {
+	if [[ -z $3 ]]
+	then 
+		#minimum UID limit
+		a=$(grep "^UID_MIN" /etc/login.defs)
+ 
+		#maximum UID limit
+		b=$(grep "^UID_MAX" /etc/login.defs)
+ 
+		#use awk to print if UID >= $MIN and UID <= $MAX and shell is not /sbin/nologin
+
+		awk -F':' -v "min=${a##UID_MIN}" -v "max=${b##UID_MAX}" '{ if ( $3 >= min && $3 <= max && $7 != "/sbin/nologin" ) print $1 }' "/etc/passwd"
+
+	elif [[ $3 = "--sudo-only" ]]
+	then
+		exec getent passwd | cut -f1 -d: | xargs -L1 sudo -l -U | grep -v 'not allowed'
+
+	else
+		echo -e "\tWrong Option\n"
+		echo -e "\t See Usage"
+	fi
+}
+
+information() {
+	if [[ -e $3 ]] && [[ -z $4 ]]
+	then
+		echo -n "File: " ; ls -l "$3" | awk '{print$9}' #stat -c '%n' $3
+		echo -n "Access: " ; ls -l "$3" | awk '{print$1}' #stat -c '%A' $3
+		echo -n "Size(B): " ; ls -l "$3" | awk '{print$5}' #stat -c '%s' $3
+		echo -n "Owner: " ; ls -l "$3" | awk '{print$4}' #stat -c '%U' $3
+		echo -n "Modify: " ; stat -c '%y' "$3"
+
+	elif [[ -e $4 ]]
+	then
+		case $3 in
+		-s | --size )
+			echo -n "Size(B): " ; ls -l "$4" | awk '{print$5}'
+			;;
+		-p | --permissions )
+			echo -n "Access: " ; ls -l "$4" | awk '{print$1}'
+			;;
+		-o | --owner )
+			echo -n "Owner: " ; ls -l "$4" | awk '{print$4}'
+			;;
+		-m | --last-modified )
+			echo -n "Modify: " ; stat -c '%y' "$4"
+			;;
+		*)
+			echo "Wrong option"
+		esac
+	else
+		echo "File not present..!"
+	fi
+}
+
+case $1 in
+--help)
+    printf '%s\n' "$usage"
+    ;;
+--version)
+    printf '%s\n' "$version"
+    ;;
+*)
+	if [[ -z "$1" ]]
+	then
+		echo -e "\t\tNo Argument Given\n"
+		printf '%s\n' "$usage"
+	elif [[ $1 = "cpu" ]] && [[ $2 = "getinfo" ]]
+	then
+		exec lscpu
+	elif [[ $1 = "memory" ]] && [[ $2 = "getinfo" ]]
+	then
+		exec free
+	elif [[ $1 = "user" ]] && [[ $2 = "create" ]]
+	then
+		create "$@"
+
+	elif [[ $1 = "user" ]] && [[ $2 = "list" ]]
+	then
+		list "$@"
+
+	elif [[ $1 = "file" ]] && [[ $2 = "getinfo" ]]
+	then
+		information "$@"
+
+
+	else
+		echo -e "\tWrong Argument\n"
+		echo -e "\t See Manual Page for usage"
+	fi
+    ;;
+esac
