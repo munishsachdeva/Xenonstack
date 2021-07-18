@@ -16,7 +16,7 @@ then
 	#exec sudo adduser myuser --gecos "First Last,RoomNumber,WorkPhone,HomePhone" --disabled-password
 	#exec sudo useradd -s /bin/bash -m -p toor myuser
 
-elif [[ $1 = "user" ]] && [[ $2 = "list" ]] && [[ -z "$3" ]]
+elif [[ $1 = "user" ]] && [[ $2 = "list" ]]
 then
 	source list
 	#. ./list
