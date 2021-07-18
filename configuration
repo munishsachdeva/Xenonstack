@@ -23,13 +23,9 @@ then
 elif [[ $1 = "user" ]] && [[ $2 = "list" ]] && [[ $3 = "--sudo-only" ]]
 then
 	source sudoer
-elif [[ $1 = "file" ]] && [[ $2 = "getinfo" ]] #&& [[ -z $4 ]]
+elif [[ $1 = "file" ]] && [[ $2 = "getinfo" ]]
 then
 	source information
-
-#elif [[ $1 = "file" ]] && [[ $2 = "getinfo" ]] && [[ -e $4 ]] # -e checks if file exit
-#then
-#	source information2
 
 else
 	echo "bad input"
