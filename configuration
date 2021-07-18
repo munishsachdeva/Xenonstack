@@ -20,9 +20,7 @@ elif [[ $1 = "user" ]] && [[ $2 = "list" ]] && [[ -z "$3" ]]
 then
 	source list
 	#. ./list
-elif [[ $1 = "user" ]] && [[ $2 = "list" ]] && [[ $3 = "--sudo-only" ]]
-then
-	source sudoer
+
 elif [[ $1 = "file" ]] && [[ $2 = "getinfo" ]]
 then
 	source information
