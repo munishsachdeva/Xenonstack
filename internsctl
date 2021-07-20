@@ -20,8 +20,8 @@ Mandatory arguments to long options are mandatory for short options too
 
 case $1 in
 --help)
-    printf '%s\n' "$usage"
-    ;;
+	printf '%s\n' "$usage"
+	;;
 --version)
     printf '%s\n' "$version"
     ;;
