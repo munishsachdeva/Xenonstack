@@ -10,19 +10,19 @@ then
 	if [[ $(id -u) -eq 0 ]]
 	then
 		read -r -s -p "Enter password : " password
-		grep -E "^$username" /etc/passwd >/dev/null
-			if [ $? -eq 0 ]
+		grep -E "^$3" /etc/passwd >/dev/null
+			if [[ $? -eq 0 ]]
 			then
-				echo -e "\n$username exists!"
-				#exit 1
+				echo -e "\n$3 exists!"
+				exit 1
 			else
 				pass=$(perl -e 'print crypt($ARGV[0], "password")' "$password")
-				useradd -s /bin/bash -m -p "$pass" "$username"
+				useradd -s /bin/bash -m -p "$pass" "$3"
 				[ $? -eq 0 ] && echo "User has been added to system!" || echo "Failed to add a user!"
 			fi
 	else
 		echo "Only root may add a user to the system."
-		#exit 2
+		exit 2
 	fi
 else
 	echo "Write Username also"
